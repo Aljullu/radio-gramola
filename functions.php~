@@ -162,7 +162,6 @@ function printCollabora() {
 }
 
 function printBanner() {
- return;
  echo '<div class="horizontal-ad">
 			<a href="https://play.google.com/store/apps/details?id=com.t_estalvia" title="Tarifes TMB" target="_blank"><img src="/img/baners/t-estalvia-banner.png" alt="Baixa l\'aplicació T-Estalvia per a estalviar utilitzant el transport públic"/></a>
 		</div>';
