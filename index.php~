@@ -211,7 +211,7 @@ $(document).ready(function() {
 		<div class="canco">«<a href="./d/<?php echo $canco['artistauri']; ?>/<?php echo $canco['uri']; ?>" target="_blank"><?php echo $canco['nom']; ?></a>» — <a href="/d/<?php echo $canco['artistauri']; ?>" target="_blank"><?php echo $canco['artista']; ?></a></div>
 		</div>
 	<div id="video">
-		<iframe width="<?php echo $width; ?>" height="<?php echo $height; ?>" src="http://www.youtube.com/embed/<?php echo $canco['codi']; ?>?autoplay=1&iv_load_policy=3&controls=<?php echo $controls; ?>&start=<?php echo $segonsqueportalacanco; ?>" frameborder="0" allowfullscreen></iframe>
+		<iframe width="<?php echo $width; ?>" height="<?php echo $height; ?>" src="http://www.youtube.com/embed/<?php echo $canco['codi']; ?>?autoplay=1&controls=<?php echo $controls; ?>&start=<?php echo $segonsqueportalacanco; ?>" frameborder="0" allowfullscreen></iframe>
 	</div>
 	<div>
 		<div id="xat" class="box"><a style="cursor: pointer;" onclick="popup()">Xat</a></div>
