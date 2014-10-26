@@ -1,0 +1,35 @@
+html,
+body {
+	overflow: hidden;
+	text-align: center;
+}
+#div-pos,
+#div-neg {
+	display: inline-block;
+	height: 60px;
+	position: relative;
+	width: 46px;
+}
+#form-pos > a > img,
+#form-neg > a > img {
+	opacity: .4;
+}
+#image-pos,
+#image-neg,
+#form-pos > a:hover > img,
+#form-neg > a:hover > img {
+	display: inline-block;
+	opacity: 1;
+}
+#div-pos .vots,
+#div-neg .vots {
+	bottom: -5px;
+	position: absolute;
+	right: 0;
+}
+#video {
+	visibility: hidden;
+}
+#infocanco {
+	font-size: 10px;
+}

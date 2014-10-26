@@ -1,0 +1,5 @@
+# contrasenya admin
+AuthUserFile /home/radiogramola.cat/.htpasswd
+AuthType Basic
+AuthName "admin"
+Require valid-user

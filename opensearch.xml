@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+    <ShortName>Ràdio Gramola</ShortName>
+    <LongName>Cercador de Ràdio Gramola</LongName>
+    <Description>Cerca a la llista de Ràdio Gramola</Description>
+    <InputEncoding>UTF-8</InputEncoding>
+    <AdultContent>false</AdultContent>
+    <Language>ca-ES</Language>
+    <Developer>RàdioGramola.cat Albert Juhé Lluveras</Developer>
+    <Contact>aljullu@gmail.com</Contact>
+    <Description>Cerca de videoclips, lletres i informació de cançons, àlbums i artistes en català</Description>
+    <Tags>música videoclips lletres cançons àlbums artistes català ràdio</Tags>
+    <SyndicationRight>open</SyndicationRight>
+    <Query role="example" searchTerms="cat"/>
+    <Image height="16" width="16" type="image/x-icon">http://www.radiogramola.cat/favicon16.ico</Image>
+    <Url type="text/html" method="get" template="http://www.radiogramola.cat/search.php?s={searchTerms}&amp;utm_source=opensearch"/>
+    <Url type="application/x-suggestions+json" template="http://www.radiogramola.cat/opensearchsuggestions.php?s={searchTerms}"/>
+</OpenSearchDescription>

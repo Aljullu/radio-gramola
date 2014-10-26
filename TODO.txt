@@ -1,0 +1,28 @@
+﻿ALTA
+En tancar el panell d'informació en una subpàgina, que tampoc es mostri a la pàgina principal
+Imatge de fons per al Twitter
+S'hauria de fer una interfície a l'admin per poder assignar temporada i capítol a les sèries
+A la pàgina d'article no surt la intro
+Classificar les cançons per gènere (p.ex.: cançons de rock en català)
+Classificar les cançons per temàtica (p.ex.: cançons d'amor en català)
+Versió per a mòbils
+
+MITJANA
+Registre d'usuaris
+Canal Clàssic
+Permetre mútliples artistes a les cançons
+Poder detectar àlbums i artistes sense cançons per eliminar-los
+Comptador d'usuaris en línia
+Xat
+
+BAIXA
+Scrobbling amb Last.fm
+Intregar amb una botiga de música
+En lloc d'actualitzar la pàgina, canviar el vídeo i el títol amb Ajax
+
+FET
+Imatge per al Facebook i el Google+
+Imatge petita per al Google+
+Pàgines de sèries que mostrin informació del capítol/temporada i no dels vots
+04/12/2012 que a la pàgina d'artista no es mostrin els vots de totes les cançons
+31/12/2012 "Extensió per al Firefox" només s'hauria de mostrar als usuaris del Firefox

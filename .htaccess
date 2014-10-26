@@ -1,0 +1,42 @@
+RewriteEngine On
+RewriteRule ^(upyourspot|upyourspot)($|/) - [L]
+RewriteRule ^(.+)/$  /$1 [R=301]
+RewriteRule ^d/([0-9a-zA-Z-_]*)/([0-9a-zA-Z-_]*)$ directory.php?type=1 [L]
+RewriteRule ^d/([0-9a-zA-Z-_]*)$ directory.php?type=2 [L]
+RewriteRule ^p/([0-9a-zA-Z-_]*)$ page.php [L]
+RewriteRule ^serie/([0-9a-zA-Z-_]*)$ llista-cancons.php [L]
+RewriteRule ^cancons-sobre/([0-9a-zA-Z-_]*)$ llista-cancons.php [L]
+RewriteRule ^web$ http://www.radiogramola.cat/ [R=301,L]
+RewriteRule ^index\.php$ http://www.radiogramola.cat/ [R=301,L]
+
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^radiogramola.cat [NC]
+RewriteRule ^(.*)$ http://www.radiogramola.cat/$1 [L,R=301]
+
+# 30 dies
+<FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|swf)$">
+Header set Cache-Control "max-age=2592000, public"
+</FilesMatch>
+
+# 1 dia
+<FilesMatch "\.(css)$">
+Header set Cache-Control "max-age=86400, public"
+</FilesMatch>
+
+# compress text, HTML, JavaScript, CSS, and XML
+AddOutputFilterByType DEFLATE text/plain
+AddOutputFilterByType DEFLATE text/html
+AddOutputFilterByType DEFLATE text/xml
+AddOutputFilterByType DEFLATE text/css
+AddOutputFilterByType DEFLATE application/xml
+AddOutputFilterByType DEFLATE application/xhtml+xml
+AddOutputFilterByType DEFLATE application/rss+xml
+AddOutputFilterByType DEFLATE application/javascript
+AddOutputFilterByType DEFLATE application/x-javascript
+# remove browser bugs
+BrowserMatch ^Mozilla/4 gzip-only-text/html
+BrowserMatch ^Mozilla/4\.0[678] no-gzip
+BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+Header append Vary User-Agent
+
+ErrorDocument 404 /404.php
