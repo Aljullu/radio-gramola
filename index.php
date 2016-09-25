@@ -5,17 +5,17 @@
 	$segonsdesdemitjanit = intval(date("h") * 3600) + intval(date("i") * 60) + intval(date("s"));
 
 	/* Connectem amb la BD i seleccionem la taula */
-	connecta();
+	$con = connecta();
 	
 	/* Mirem quina cançó toca reproduir */
 	$query = "SELECT *, MIN(hora) FROM (SELECT * FROM programacio WHERE hora > ".$segonsdesdemitjanit.") AS T";
-	$infocancoareproduir = mysql_query($query);
-	$infocancoareproduir = mysql_fetch_array($infocancoareproduir);
+	$infocancoareproduir = mysqli_query($con, $query);
+	$infocancoareproduir = mysqli_fetch_array($infocancoareproduir);
 	
 	/* La busquem */
 	$query = "SELECT llista.id, llista.uri, llista.nom, codi, durada, lletra, posmes, negmes, pos, neg, artistes.uri AS artistauri, artistes.nom AS artista FROM llista LEFT OUTER JOIN artistes ON llista.artistaid = artistes.id WHERE llista.id='".$infocancoareproduir['idcanco']."'";
-	$infocancons = mysql_query($query);
-	$infocanco[] = mysql_fetch_array($infocancons);
+	$infocancons = mysqli_query($con, $query);
+	$infocanco[] = mysqli_fetch_array($infocancons);
 	$canco = $infocanco[0];
 	
 	/* Calculem la durada */
@@ -24,21 +24,21 @@
 	/* Busquem la cançó següent */
 	$idabuscar = $infocancoareproduir['id']+1;
 	$query = "SELECT * FROM programacio WHERE id='".$idabuscar."'";
-	$infoprog = mysql_query($query);
-	$infoprogseguent[] = mysql_fetch_array($infoprog);
+	$infoprog = mysqli_query($con, $query);
+	$infoprogseguent[] = mysqli_fetch_array($infoprog);
 	$query = "SELECT llista.uri AS uri, llista.nom, artistaid, artistes.nom AS artista, durada FROM llista LEFT OUTER JOIN artistes ON llista.artistaid = artistes.id WHERE llista.id='".$infoprogseguent[0]['idcanco']."'";
-	$infocancons = mysql_query($query);
-	$infocancoseguent[] = mysql_fetch_array($infocancons);
+	$infocancons = mysqli_query($con, $query);
+	$infocancoseguent[] = mysqli_fetch_array($infocancons);
 	$cancoseg = $infocancoseguent[0];
 	
 	/* Busquem la cançó anterior */
 	$idabuscar = $infocancoareproduir['id']-1;
 	$query = "SELECT * FROM programacio WHERE id='".$idabuscar."'";
-	$infoprog = mysql_query($query);
-	$infoproganterior[] = mysql_fetch_array($infoprog);
+	$infoprog = mysqli_query($con, $query);
+	$infoproganterior[] = mysqli_fetch_array($infoprog);
 	$query = "SELECT llista.nom, durada, artistaid, artistes.nom AS artista FROM llista LEFT OUTER JOIN artistes ON llista.artistaid = artistes.id WHERE llista.id='".$infoproganterior[0]['idcanco']."'";
-	$infocancons = mysql_query($query);
-	$infocancoanterior[] = mysql_fetch_array($infocancons);
+	$infocancons = mysqli_query($con, $query);
+	$infocancoanterior[] = mysqli_fetch_array($infocancons);
 	$cancoant = $infocancoanterior[0];
 	
 	/* Calculem la durada */
@@ -50,11 +50,11 @@
 	
 	/* Comptem el número de cançons */
 	$query = "SELECT COUNT(nom) FROM llista WHERE aprovada = 1";
-	$result = mysql_query($query);
-	$numcancons = mysql_fetch_array($result);
+	$result = mysqli_query($con, $query);
+	$numcancons = mysqli_fetch_array($result);
 	
 	/* Si l'usuari ha afegit una valoració */
-	valoracio($_POST['valoracio'],$_POST['antvaloracio'],$canco);
+	valoracio($con, $_POST['valoracio'], $_POST['antvaloracio'], $canco);
 	
 	if ($_POST['valoracio'] == 1) $canco['posmes']++;
 	elseif ($_POST['valoracio'] == 0) $canco['negmes']++;
@@ -77,8 +77,8 @@
 <html>
 <head>
 <?php printCssIncludes(); ?>
-<link rel="shortcut icon" href="./favicon.ico">
-<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="Cerca de Ràdio Gramola">
+<link rel="shortcut icon" href="<?php echo $baseUrl; ?>/favicon.ico">
+<link rel="search" type="application/opensearchdescription+xml" href="<?php echo $baseUrl; ?>/opensearch.xml" title="Cerca de Ràdio Gramola">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Ràdio Gramola, la ràdio televisió musical 24 hores en català. Grups de música catalans i en català. Lletres i vídeos.</title>
 <meta name="keywords" content="música, català, música català, cançons català, ràdio català, televisió musical català, llista cançons català, descobrir cançons català, rock català, pop català" />
@@ -166,13 +166,6 @@ function amagaLletra() {
 }
 </script>
 <script type="text/javascript">
-<!--
-function popup() {
-window.open( "http://www.radiogramola.cat/xat.php", "xat", "status = 1, height=427, width=347, resizable = 0" )
-}
-//-->
-</script>
-<script type="text/javascript">
 // Preferències
 function togglePreferences() {
 	$("#preferencies").slideToggle();
@@ -208,13 +201,12 @@ $(document).ready(function() {
 	<?php printWebInfo(true); ?>
 	<?php printBanner(); ?>
 	<div id="info-canco">
-		<div class="canco">«<a href="./d/<?php echo $canco['artistauri']; ?>/<?php echo $canco['uri']; ?>" target="_blank"><?php echo $canco['nom']; ?></a>» — <a href="/d/<?php echo $canco['artistauri']; ?>" target="_blank"><?php echo $canco['artista']; ?></a></div>
+		<div class="canco">«<a href="<?php echo $baseUrl; ?>/d/<?php echo $canco['artistauri']; ?>/<?php echo $canco['uri']; ?>" target="_blank"><?php echo $canco['nom']; ?></a>» — <a href="<?php echo $baseUrl; ?>/d/<?php echo $canco['artistauri']; ?>" target="_blank"><?php echo $canco['artista']; ?></a></div>
 		</div>
 	<div id="video">
 		<iframe width="<?php echo $width; ?>" height="<?php echo $height; ?>" src="http://www.youtube.com/embed/<?php echo $canco['codi']; ?>?autoplay=1&iv_load_policy=3&controls=<?php echo $controls; ?>&start=<?php echo $segonsqueportalacanco; ?>" frameborder="0" allowfullscreen></iframe>
 	</div>
 	<div>
-		<div id="xat" class="box"><a style="cursor: pointer;" onclick="popup()">Xat</a></div>
 	<?php if(isset($canco['lletra']) && $canco['lletra'] != "") { ?>
 		<div id="lletra-link"><a title="Mostra la lletra" onClick="mostraLletra()" style="cursor:pointer;">Mostra'n la lletra</a></div>
 	<?php } ?>
@@ -230,15 +222,15 @@ $(document).ready(function() {
 			<p><?php echo $cancoant['nom']; ?></p>
 			<p><?php echo $cancoant['artista']; ?></p>
 		</div>
-		<?php printContextMenu($cancoant['artistaid'],"menu-anterior"); ?>
+		<?php printContextMenu($con, $cancoant['artistaid'], "menu-anterior"); ?>
 		<div id="div-neg">
 			<form id="form-neg" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" enctype="multipart/form-data">
 				<input type="hidden" name="id" value="<?php echo $canco['id']; ?>"/>
 				<input class="antvaloracio" type="hidden" name="antvaloracio" value=""/>
 				<input type="hidden" name="valoracio" value="0"/>
-				<a href="#" title="No m'agrada" onclick="parentNode.submit()"><img alt="No m'agrada" src="./img/neg.png"/></a>
+				<a href="#" title="No m'agrada" onclick="parentNode.submit()"><img alt="No m'agrada" src="<?php echo $baseUrl; ?>/img/neg.png"/></a>
 			</form>
-			<img id="image-neg" title="No m'agrada" alt="No m'agrada" src="./img/neg.png" style="display: none;"/>
+			<img id="image-neg" title="No m'agrada" alt="No m'agrada" src="<?php echo $baseUrl; ?>/img/neg.png" style="display: none;"/>
 			<span class="vots"><?php echo $canco['negmes']; ?></span>
 		</div>
 		<div id="div-pos">
@@ -246,31 +238,31 @@ $(document).ready(function() {
 				<input type="hidden" name="id" value="<?php echo $canco['id']; ?>"/>
 				<input class="antvaloracio" type="hidden" name="antvaloracio" value=""/>
 				<input type="hidden" name="valoracio" value="1"/>
-				<a href="#" title="M'agrada" onclick="parentNode.submit()"><img alt="M'agrada" src="./img/pos.png"/></a>
+				<a href="#" title="M'agrada" onclick="parentNode.submit()"><img alt="M'agrada" src="<?php echo $baseUrl; ?>/img/pos.png"/></a>
 			</form>
-			<img id="image-pos" title="M'agrada" alt="M'agrada" src="./img/pos.png" style="display: none;"/>
+			<img id="image-pos" title="M'agrada" alt="M'agrada" src="<?php echo $baseUrl; ?>/img/pos.png" style="display: none;"/>
 			<span class="vots"><?php echo $canco['posmes']; ?></span>
 		</div>
 		<div id="seguent" contextmenu="menu-seguent">
 			<p><?php echo $cancoseg['nom']; ?></p>
 			<p><?php echo $cancoseg['artista']; ?></p>
 		</div>
-		<?php printContextMenu($cancoseg['artistaid'],"menu-seguent"); ?>
+		<?php printContextMenu($con, $cancoseg['artistaid'], "menu-seguent"); ?>
 	</div>
 	<div id="connectatsara">
 		<script id="_wau9cp">var _wau = _wau || []; _wau.push(["classic", "gwkltbss03ez", "9cp"]);(function() { var s=document.createElement("script"); s.async=true; s.src="http://widgets.amung.us/classic.js";document.getElementsByTagName("head")[0].appendChild(s);})();</script>
 	</div>
 	<nav>
 		<ul id="menu">
-			<li><a title="Llista de cançons" href="/llista-cancons.php" target="_blank">Llista de cançons</a></li>
-			<li><a title="Suggereix una cançó" href="/suggereix-canco.php" target="_blank">Suggereix una cançó</a></li>
+			<li><a title="Llista de cançons" href="<?php echo $baseUrl; ?>/llista-cancons.php" target="_blank">Llista de cançons</a></li>
+			<li><a title="Suggereix una cançó" href="<?php echo $baseUrl; ?>/suggereix-canco.php" target="_blank">Suggereix una cançó</a></li>
 			<li><a title="Preferències" onClick="togglePreferences();" style="cursor:pointer">Preferències</a></li>
-			<li><a title="Col·labora amb Ràdio Gramola" href="/p/collabora" target="_blank">Col·labora</a></li>
-			<li><a title="Preguntes més freqüents" href="/p/pmf" target="_blank"><abbr title="Preguntes més freqüents">PMF</abbr></a></li>
+			<li><a title="Col·labora amb Ràdio Gramola" href="<?php echo $baseUrl; ?>/p/collabora" target="_blank">Col·labora</a></li>
+			<li><a title="Preguntes més freqüents" href="<?php echo $baseUrl; ?>/p/pmf" target="_blank"><abbr title="Preguntes més freqüents">PMF</abbr></a></li>
 		</ul>
 	</nav>
 	<!-- Preferències -->
-	<form id="preferencies" action="/index.php" method="get" enctype="multipart/form-data" style="display:none">
+	<form id="preferencies" action="<?php echo $baseUrl; ?>/index.php" method="get" enctype="multipart/form-data" style="display:none">
 	<div id="preferencies-table">
 		<div>
 			Mides del reproductor suggerides:<br/>
@@ -299,13 +291,12 @@ $(document).ready(function() {
 		</div>
 	</div>
 	</form>
-	<p>Ja tenim <?php echo $numcancons[0]; ?> <a href="./llista-cancons.php" target="_blank">cançons en català</a> a la llista.</p>
+	<p>Ja tenim <?php echo $numcancons[0]; ?> <a href="<?php echo $baseUrl; ?>/llista-cancons.php" target="_blank">cançons en català</a> a la llista.</p>
 	<?php /* Com que és poc important per al SEO i amb CSS ho podem posicionar on vulguem, ho posem al final */ ?>
 	<div id="social-links">
-		<a target="_blank" href="http://www.facebook.com/radiogramola" title="Trobeu-nos al Facebook"><img alt="Facebook" src="./img/social/fb.png"/></a>
-		<a target="_blank" href="http://www.twitter.com/radiogramola" title="Trobeu-nos al Twitter"><img alt="Facebook" src="./img/social/twitter.png"/></a>
-		<a target="_blank" href="https://plus.google.com/b/104411283361538424673/104411283361538424673/posts" title="Trobeu-nos al Google+"><img alt="Google+" src="./img/social/google.png"/></a>
-		<a target="_blank" href="http://www.tuenti.com/#m=Page&page_key=1_2200_62232057" title="Trobeu-nos al Tuenti"><img alt="Facebook" src="./img/social/tuenti.png"/></a>
+		<a target="_blank" href="http://www.facebook.com/radiogramola" title="Trobeu-nos al Facebook"><img alt="Facebook" src="<?php echo $baseUrl; ?>/img/social/fb.png"/></a>
+		<a target="_blank" href="http://www.twitter.com/radiogramola" title="Trobeu-nos al Twitter"><img alt="Facebook" src="<?php echo $baseUrl; ?>/img/social/twitter.png"/></a>
+		<a target="_blank" href="https://plus.google.com/b/104411283361538424673/104411283361538424673/posts" title="Trobeu-nos al Google+"><img alt="Google+" src="<?php echo $baseUrl; ?>/img/social/google.png"/></a>
 	</div>
 </div>
 </body>

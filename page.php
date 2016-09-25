@@ -5,13 +5,13 @@
 	$con = connecta();
 	
 	$page_exploded = explode("/",$_SERVER['REQUEST_URI']);
-	$uripage = $page_exploded[2];
+	$uripage = $page_exploded[3];
 ?>
 <!DOCTYPE html>
 <html>
 <head>
 <?php printCssIncludes(); ?>
-<link rel="shortcut icon" href="/favicon.ico">
+<link rel="shortcut icon" href="<?php echo $baseUrl; ?>/favicon.ico">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <?php if ($uripage == "pmf") { ?>
 <title>Preguntes més freqüents | Ràdio Gramola, la radio televisió musical 24 hores en català</title>
@@ -50,7 +50,7 @@ s.parentNode.insertBefore(po, s);
 </head>
 <body>
 <div id="wrapper">
-<p><a title="Ràdio en català" href="/index.php">Torna a l'inici</a></p>
+<p><a title="Ràdio en català" href="<?php echo $baseUrl; ?>/index.php">Torna a l'inici</a></p>
 <!-- AdSense -->
 <script type="text/javascript"><!--
 google_ad_client = "ca-pub-7541474864707154";
@@ -99,10 +99,10 @@ if($uripage == "pmf") { ?>
 <p>Cada usuari només pot votar positiva o negativament cada cançó un cop al mes. El dia 1 del mes següent les votacions es reinicien i es pot tornar a votar.</p>
 <strong>Per què s'utilitzen aquests vots?</strong>
 <p>Els vots serveixen principalment per determinar la programació dels propers dies. No ho fan d'una manera directa sinó indirecta, el nostre sistema mira quines són les cançons que més agraden i els dóna més freqüència que les cançons que no agraden.</p>
-<p>Els vots també es poden veure a la <a href="./llista-cancons.php">llista de cançons</a>. A més, la taula permet ordenar per columnes, de manera que podeu ordenar les cançons per nombre de vots positius i nombre de vots negatius i així saber les cançons que més agraden i les que menys.</p>
+<p>Els vots també es poden veure a la <a href="<?php echo $baseUrl; ?>/llista-cancons.php">llista de cançons</a>. A més, la taula permet ordenar per columnes, de manera que podeu ordenar les cançons per nombre de vots positius i nombre de vots negatius i així saber les cançons que més agraden i les que menys.</p>
 <h2 id="suggereix">Suggereix una cançó</h2>
 <strong>Què significa l'enllaç «Suggereix una cançó?»</strong>
-<p>Estem al dia de la música en català i intentem tenir una <a href="./llista-cancons.php">llista</a> on hi apareguin cançons de tots els gèneres i dels principals grups en català. Tot i això, segur que hi ha moltes cançons en la nostra llengua que no coneixem. Per això, us oferim la possibilitat (i us animem a fer-ho!) de suggerir noves cançons per incloure-les a la nostra llista.</p>
+<p>Estem al dia de la música en català i intentem tenir una <a href="<?php echo $baseUrl; ?>/llista-cancons.php">llista</a> on hi apareguin cançons de tots els gèneres i dels principals grups en català. Tot i això, segur que hi ha moltes cançons en la nostra llengua que no coneixem. Per això, us oferim la possibilitat (i us animem a fer-ho!) de suggerir noves cançons per incloure-les a la nostra llista.</p>
 <strong>Si afegiu un cançó que us he suggerit a la llista, m'avisareu?</strong>
 <p>No, en el formulari per a suggerir una cançó no agafem dades personals, de manera que no podem contactar amb qui ha fet el suggeriment. Si voleu saber si una cançó que heu suggerit s'ha afegit, el millor que podeu fer és cercar-la a la llista uns dies després.</p>
 <strong>Us vaig enviar una cançó però no l'heu afegit a la llista, perquè?</strong>
@@ -120,15 +120,6 @@ if($uripage == "pmf") { ?>
 <p>Ara bé, un directe gravat per alguna cadena de televisió o pel mateix grup, molt probablement sí que ho compleixi.</p>
 <p>Per exemple, <a href="http://www.youtube.com/watch?v=0xTVVprYDNw">aquesta cançó</a> no podria ser inclosa. Però <a href="http://www.youtube.com/watch?v=NIZDfOGFcc4">aquesta</a> sí.</p>
 <h2 id="aspectes-tecnics">Aspectes tècnics</h2>
-<strong id="pantallacompleta">Puc mirar els vídeos en pantalla completa?</strong>
-<p>Per defecte l'API del YouTube no ho permet i la primera resposta seria que no.</p>
-<p>Ara bé, com que diversos usuaris de la versió beta ho van demanar, hem intentat idear un sistema per simular la pantalla completa. El procediment és el següent:</p>
-<ul>
-	<li>Entreu a <a href="http://www.radiogramola.cat/index-fullscreen.php?w=1024&h=768">http://www.radiogramola.cat/index-fullscreen.php?w=1024&h=768</a> (canviant 1024 i 768 per la resolució del vostre monitor)</li>
-	<li>Premeu F11</li>
-	<li>Si en algun moment voleu saber quina cançó està sonant, la voleu votar, etc. només cal que desplaceu la pàgina cap a baix, on hi ha els controladors.</li>
-</ul>
-<p><em>Nota: els propers dies canviarem el sistema de pantalla completa, de manera que és possible que aquest sistema no funcioni d'aquí a poc.</em></p>
 <strong>Jo només vull escoltar música, realment és eficient estar baixant vídeos contínuament?</strong>
 <p>El nostre sistema el que fa és agafar els vídeos del YouTube i inserir-los a la pàgina, amagant-ne la interfície i afegint-hi la capa social per votar les cançons i suggerir-ne de noves.</p>
 <p>Des de fa anys, el YouTube aprofita la memòria cau (<em>cache memory</em>) del navegador. A efectes pràctics això significa que només cal baixar-se el vídeo el primer cop que el mires. A partir de llavors, el navegador l'emmagatzema als seus fitxers interns, de manera que quan miris el vídeo una altra vegada, aquest es reproduirà des de la versió emmagatzemada al teu disc dur i no generarà tràfic per la xarxa.</p>
@@ -171,7 +162,7 @@ elseif($uripage == "collabora") { ?>
 </ul>
 <p>Si t'has decidit a col·laborar o si més no a conèixer-ne més informació, et pots posar en contacte amb nosaltres al correu <a href="mailto:radiogramolacat@gmail.com">radiogramolacat@gmail.com</a>.
 <p>Si no et veus en cor de participar en cap d'aquest àmbits anteriors, encara pots seguir col·laborant amb nosaltres. Senzillament fes conèixer el lloc web entre els teus amics, difón la pàgina entre els teus contactes, si tens un bloc escriu sobre nosaltres i si tens un lloc web posa'ns un enllaç!</p>
-<p>I per descomptat: segueix-nos al <a href="http://www.facebook.com/radiogramola">Facebook</a>, al <a href="http://www.twitter.com/radiogramola">Twitter</a>, al <a href="https://plus.google.com/b/104411283361538424673/104411283361538424673/posts">Google+</a> i al <a href="http://www.tuenti.com/#m=Page&page_key=1_2200_62232057">Tuenti</a>.</p>
+<p>I per descomptat: segueix-nos al <a href="http://www.facebook.com/radiogramola">Facebook</a> i al <a href="http://www.twitter.com/radiogramola">Twitter</a>, al <a href="https://plus.google.com/b/104411283361538424673/104411283361538424673/posts">Google+</a>.</p>
 <?php }
 
 
@@ -225,7 +216,7 @@ elseif ($uripage == "linia-temporal") { ?>
 					else {
 						echo "<td>-</td>";
 					}
-					echo "<td><a href='http://www.radiogramola.cat/d/".$album['artistauri']."'>".$album['artista']."</a></td>";
+					echo "<td><a href='". $baseUrl ."/d/".$album['artistauri']."'>".$album['artista']."</a></td>";
 					echo "</tr>";
 				}
 				$totalanys = $ultimany - $primerany + 2;
@@ -384,7 +375,7 @@ elseif ($uripage == "suggereix-canco") { ?>
 	
 			$query="INSERT INTO llista (uri,nom,artistaid,albumid,codi,durada,lletra,lletraviasona,aprovada,pos,neg) VALUES ('".$uri."','".htmlspecialchars(trim($_POST['nom']), ENT_QUOTES)."','".$artista['id']."','".$album['id']."','".$_POST['codi']."','".$_POST['durada']."','".htmlspecialchars($_POST['lletra'], ENT_QUOTES)."','".trim($_POST['lletraviasona'])."',0,0,0)";
 			if (!mysql_query($query,$con)) die("S'ha produït un error en afegir la cançó: " . mysql_error());
-			$frase = "La cançó s'ha enviat correctament. Si passa el procés de selecció, durant els propers dies s'afegirà a la <a href='./llista-cancons.php'>llista de cançons</a> i començarà a sonar a la televisió 24 hores.";
+			$frase = "La cançó s'ha enviat correctament. Si passa el procés de selecció, durant els propers dies s'afegirà a la <a href='". $baseUrl ."/llista-cancons.php'>llista de cançons</a> i començarà a sonar a la televisió 24 hores.";
 		}
 		else {
 			$form_nom = $_POST['nom'];
@@ -406,7 +397,7 @@ elseif ($uripage == "suggereix-canco") { ?>
 	<div id="content">
 		<p><strong><?php echo $frase; ?></strong></p>
 		<p>Envia una cançó que t'agradi:</p>
-		<form action="/p/suggereix-canco" method="post" enctype="multipart/form-data">
+		<form action="<?php echo $baseUrl; ?>/p/suggereix-canco" method="post" enctype="multipart/form-data">
 		<span class="label">Cançó: </span><input type="text" name="nom" placeholder="Benvolgut" value="<?php echo $form_nom; ?>" required><br/>
 		<span class="label">Artista: </span><input autocomplete="off" list="artistes" type="text" name="artista" placeholder="Manel" value="<?php echo $form_artista; ?>" required><br/>
 		<?php /* Suggeriments */
@@ -453,12 +444,12 @@ Error 404
 *********************************************/
 else { ?>
 	<script>
-	window.location = 'http://www.radiogramola.cat/404.php'
+	window.location = '<?php echo $baseUrl; ?>/404.php'
 	</script>
 <?php } ?>
 </div>
 </body>
 </html>
 <?php
-		mysql_close($con);
+		mysqli_close($con);
 ?>

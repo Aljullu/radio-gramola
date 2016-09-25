@@ -2,28 +2,25 @@
 	include 'functions.php';
 	/* Connectem amb la BD i seleccionem la taula */
 	$con = connecta();
-	if (!$con) die("S'ha produït un error, disculpeu les molèsties: " . mysql_error());
-	mysql_select_db("psicoajuradio", $con);
-	mysql_set_charset('utf8',$con);
 ?>
 <!DOCTYPE html>
 <html>
 <head>
 <?php printCssIncludes(array('//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css')); ?>
-<link rel="shortcut icon" href="/favicon.ico">
+<link rel="shortcut icon" href="<?php echo $baseUrl; ?>/favicon.ico">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <?php printGoogleAnalyticsCode(); ?>
 <?php printJavascriptIncludes(); ?>
 <?php
+$page_exploded = explode("/",$_SERVER['REQUEST_URI']);
+$uriartista = $page_exploded[3];
 //****************************
 //****************************
 //***********CANÇÓ************
 //****************************
 //****************************
 if($_GET['type'] == 1) { // és una cançó
-	$page_exploded = explode("/",$_SERVER['REQUEST_URI']);
-	$uriartista = $page_exploded[2];
-	$uricanco = $page_exploded[3];
+	$uricanco = $page_exploded[4];
 	$query = "SELECT llista.id, llista.uri, llista.nom, codi, durada, lletra, lletraviasona, posmes, negmes, artistes.uri AS artistauri, artistes.nom AS artista, albums.nom AS album, albums.any AS albumany
 		FROM llista
 		LEFT OUTER JOIN artistes
@@ -33,8 +30,8 @@ if($_GET['type'] == 1) { // és una cançó
 		WHERE llista.uri='".$uricanco."'
 		AND artistes.uri='".$uriartista."'
 		AND aprovada = 1";
-	$infocancons = mysql_query($query);
-	$canco = mysql_fetch_array($infocancons);
+	$infocancons = mysqli_query($con, $query);
+	$canco = mysqli_fetch_array($infocancons);
 	
 	if (isset($canco['album']) && $canco['album'] != "") $tealbum = true;
 	else $tealbum = false;
@@ -45,14 +42,14 @@ if($_GET['type'] == 1) { // és una cançó
 			$noupos = intval($canco['pos']) + 1;
 			$nouposmes = intval($canco['posmes']) + 1;
 			$query = "UPDATE llista SET pos=". $noupos .", posmes=". $nouposmes ." WHERE id='".$canco['id']."'";
-			mysql_query($query);
+			mysqli_query($con, $query);
 			$canco['posmes'] = $canco['posmes'] + 1;
 		}
 		elseif ($_POST['valoracio'] == "0") {
 			$nouneg = intval($canco['neg']) + 1;
 			$nounegmes = intval($canco['negmes']) + 1;
 			$query = "UPDATE llista SET neg=". $nouneg .", negmes=". $nounegmes ." WHERE id='".$canco['id']."'";
-			mysql_query($query);
+			mysqli_query($con, $query);
 			$canco['negmes'] = $canco['negmes'] + 1;
 		}
 	}
@@ -66,7 +63,7 @@ if($_GET['type'] == 1) { // és una cançó
 					AND LL.id = ".$canco['id']."
 				GROUP BY T.id";
 	
-	$infotema = mysql_query($query);
+	$infotema = mysqli_query($con, $query);
 	
     // Series
 	$query = "SELECT S.uri, S.nom
@@ -76,12 +73,12 @@ if($_GET['type'] == 1) { // és una cançó
 					AND LL.id = ".$canco['id']."
 				GROUP BY S.id";
 	
-	$infoserie = mysql_query($query);
+	$infoserie = mysqli_query($con, $query);
 	
 	if ($infoserie) {
-	    if (mysql_num_rows($infoserie) > 0) {
+	    if (mysqli_num_rows($infoserie) > 0) {
 		    $first = true;
-		    while ($serie = mysql_fetch_array($infoserie)) {
+		    while ($serie = mysqli_fetch_array($infoserie)) {
 			    if (!$first) {
 				    $titleserie .= ', '. $serie['nom'];
 				    $descriptionseries .= ", ". $serie['nom'];
@@ -97,7 +94,7 @@ if($_GET['type'] == 1) { // és una cançó
 	    }
     }
     else {
-        performe404();
+       // performe404();
     }
 ?>
 <title><?php echo $canco['nom']." — ".$canco['artista'].$titleserie; ?> | Ràdio musical 24 hores en català, la millor música en llengua catalana</title>
@@ -189,7 +186,7 @@ function checkCookie() {
 			<h2>Informació</h2>
 			<ul>
 				<li>Nom de la cançó: <span itemprop="name"><?php echo $canco['nom'] ?></span></li>
-				<li>Artista: <a href="/d/<?php echo $canco['artistauri'] ?>"><?php echo $canco['artista'] ?></a></li>
+				<li>Artista: <a href="<?php echo $baseUrl; ?>/d/<?php echo $canco['artistauri'] ?>"><?php echo $canco['artista'] ?></a></li>
 				<?php
 				if (isset($canco['album']) && $canco['album'] != "") {
 				?>
@@ -207,68 +204,72 @@ function checkCookie() {
 				?>
 				<li>Durada: <?php echo formatTime($canco['durada']); ?></li>
 				<?php
-					if (mysql_num_rows($infotema) > 0) {
+					if ($infotema) {
+					if (mysqli_num_rows($infotema) > 0) {
 				?>
 						<li>Cançó sobre: 
 				<?php
 						$texttoprint = "";
-						mysql_data_seek($infotema, 0);
+						mysqli_data_seek($infotema, 0);
 						$first = true;
-						while ($tema = mysql_fetch_array($infotema)) {
+						while ($tema = mysqli_fetch_array($infotema)) {
 							if (!$first) $texttoprint .= ', ';
 							else $first = false;
-							$texttoprint .= '<a href="/cancons-sobre/'. $tema['uri'] .'" title="Cançons de '. $tema['nom'] .'">'. $tema['nom'] .'</a>';
+							$texttoprint .= '<a href="'. $baseUrl .'/cancons-sobre/'. $tema['uri'] .'" title="Cançons de '. $tema['nom'] .'">'. $tema['nom'] .'</a>';
 						}
 						echo replaceLastCommaWithAnd($texttoprint);
 				?>
 					</li>
 				<?php
 					}
+					}
 				?>
 				<?php
-					if (mysql_num_rows($infoserie) > 0) {
+				  if ($infoserie) {
+					if (mysqli_num_rows($infoserie) > 0) {
 				?>
 						<li>Sèries on ha aparegut: 
 				<?php
 						$texttoprint = "";
-						mysql_data_seek($infoserie, 0);
+						mysqli_data_seek($infoserie, 0);
 						$first = true;
-						while ($serie = mysql_fetch_array($infoserie)) {
+						while ($serie = mysqli_fetch_array($infoserie)) {
 							if (!$first) $texttoprint .= ', ';
 							else $first = false;
-							$texttoprint .= '<a href="/serie/'. $serie['uri'] .'" title="Cançons de '. $serie['nom'] .'">'. $serie['nom'] .'</a>';
+							$texttoprint .= '<a href="'.$baseUrl.'/serie/'. $serie['uri'] .'" title="Cançons de '. $serie['nom'] .'">'. $serie['nom'] .'</a>';
 						}
 						echo replaceLastCommaWithAnd($texttoprint);
 				?>
 					</li>
 				<?php
+					}
 					}
 				?>
 			</ul>
 			
 			<?php 
-			echo "<meta itemprop='url' content='http://www.radiogramola.cat/canco/".$canco['uri']."'/>";
+			echo "<meta itemprop='url' content='" . $baseUrl . "/canco/".$canco['uri']."'/>";
 			$durada = explode(":",$canco['durada']);
 			echo "<meta itemprop='duration' content='PT". $durada[1] ."M". $durada[2] ."S'/>";
 			?>
 			<div id="votacio">
-				<div id="div-neg">
-					<form id="form-neg" action="#" method="post" enctype="multipart/form-data">
-						<input type="hidden" name="id" value="<?php echo $canco['id']; ?>"/>
-						<input type="hidden" name="valoracio" value="0"/>
-						<a href="#" title="No m'agrada" onclick="parentNode.submit()"><img alt="No m'agrada" src="/img/neg.png"/></a>
-					</form>
-					<img id="image-neg" title="No m'agrada" alt="No m'agrada" src="/img/neg.png" style="display: none;"/>
-					<span class="vots"><?php echo $canco['negmes']; ?></span>
-				</div>
 				<div id="div-pos">
 					<form id="form-pos" action="#" method="post" enctype="multipart/form-data">
 						<input type="hidden" name="id" value="<?php echo $canco['id']; ?>"/>
 						<input type="hidden" name="valoracio" value="1"/>
-						<a href="#" title="M'agrada" onclick="parentNode.submit()"><img alt="M'agrada" src="/img/pos.png"/></a>
+						<a href="#" title="M'agrada" onclick="parentNode.submit()"><img alt="M'agrada" src="<?php echo $baseUrl; ?>/img/pos.png"/></a>
 					</form>
-					<img id="image-pos" title="M'agrada" alt="M'agrada" src="/img/pos.png" style="display: none;"/>
+					<img id="image-pos" title="M'agrada" alt="M'agrada" src="<?php echo $baseUrl; ?>/img/pos.png" style="display: none;"/>
 					<span class="vots"><?php echo $canco['posmes']; ?></span>
+				</div>
+				<div id="div-neg">
+					<form id="form-neg" action="#" method="post" enctype="multipart/form-data">
+						<input type="hidden" name="id" value="<?php echo $canco['id']; ?>"/>
+						<input type="hidden" name="valoracio" value="0"/>
+						<a href="#" title="No m'agrada" onclick="parentNode.submit()"><img alt="No m'agrada" src="<?php echo $baseUrl; ?>/img/neg.png"/></a>
+					</form>
+					<img id="image-neg" title="No m'agrada" alt="No m'agrada" src="<?php echo $baseUrl; ?>/img/neg.png" style="display: none;"/>
+					<span class="vots"><?php echo $canco['negmes']; ?></span>
 				</div>
 			</div>
 		</section>
@@ -276,7 +277,7 @@ function checkCookie() {
 			<h2>Classificació</h2>
 			<?php
 			/* Busquem la posició de vots positius */
-			$posicio = getPosicio($canco['posmes']);
+			$posicio = getPosicio($con, $canco['posmes']);
 			?>
 			<ol start="<?php echo  max(1,$posicio - 2) ?>">
 			<?php
@@ -287,9 +288,11 @@ function checkCookie() {
 				WHERE aprovada = 1 AND posmes > ". $canco['posmes']."
 				ORDER BY posmes ASC
 				LIMIT 2";
-			$infocanco = mysql_query($query);
-			while ($cancollista = mysql_fetch_array($infocanco)) {
-				echo "<li>".$cancollista['nom']." (".$cancollista['artista']."): ".$cancollista['posmes']."</li>";
+			$infocanco = mysqli_query($con, $query);
+			if ($infocanco) {
+			  while ($cancollista = mysqli_fetch_array($infocanco)) {
+				  echo "<li>".$cancollista['nom']." (".$cancollista['artista']."): ".$cancollista['posmes']."</li>";
+			  }
 			}
 			
 			/* Imprimir la nostra cançó */
@@ -302,13 +305,15 @@ function checkCookie() {
 				WHERE aprovada = 1 AND posmes <= ". $canco['posmes']." AND llista.uri != '".$canco['uri'] ."'
 				ORDER BY posmes DESC
 				LIMIT 2";
-			$infocanco = mysql_query($query);
-			while ($cancollista = mysql_fetch_array($infocanco)) {
-				echo "<li>".$cancollista['nom']." (".$cancollista['artista']."): ".$cancollista['posmes']."</li>";
+			$infocanco = mysqli_query($con, $query);
+			if ($infocanco) {
+			  while ($cancollista = mysqli_fetch_array($infocanco)) {
+				  echo "<li>".$cancollista['nom']." (".$cancollista['artista']."): ".$cancollista['posmes']."</li>";
+			  }
 			}
 			?>
 			</ol>
-			<p><small><a href="http://www.radiogramola.cat/llista-cancons.php?ordre=classificacio&destaca=<?php echo $canco['uri']; ?>#destacat">Mostra la classificació sencera</a></small></p>
+			<p><small><a href="<?php echo $baseUrl; ?>/llista-cancons.php?ordre=classificacio&destaca=<?php echo $canco['uri']; ?>#destacat">Mostra la classificació sencera</a></small></p>
 		</section>
 		<section id="page-video">
 			<h2>Vídeo</h2>
@@ -339,15 +344,13 @@ function checkCookie() {
 //****************************
 //****************************
 else if ($_GET['type'] == 2) { /* és un grup */
-	$page_exploded = explode("/",$_SERVER['REQUEST_URI']);
-	$uriartista = $page_exploded[2];
 	$query = "SELECT * FROM artistes WHERE uri='".$uriartista."'";
-	$infoartista = mysql_query($query);
+	$infoartista = mysqli_query($con, $query);
 	//if (!$infoartista) performe404();
-    if (mysql_num_rows($infoartista) == 0) performe404();
-    $artista = mysql_fetch_array($infoartista);
+//    if (mysqli_num_rows($infoartista) == 0) performe404();
+    $artista = mysqli_fetch_array($infoartista);
 ?>
-<script src="/js/sorttable.js"></script>
+<script src="<?php echo $baseUrl; ?>/js/sorttable.js"></script>
 <title><?php echo $artista['nom'] ?> | Ràdio musical 24 hores en català, la millor música en llengua catalana</title>
 <meta name="keywords" content="<?php echo $artista['nom'].", lletra ".$artista['nom'].", letra ".$artista['nom'].", ".$artista['nom']." lyrics, cançons ".$artista['nom'].", àlbums ".$artista['nom'].", discs ".$artista['nom'].", discos ".$artista['nom'].", cd ".$artista['nom'].", vídeos ".$artista['nom'].", vídeo ".$artista['nom']; ?>" />
 <meta name="description" content="Informació del grup <?php echo $artista['nom']; ?>. Inclou llista de cançons, àlbums, lletres, vídeos, web..." />
@@ -461,10 +464,10 @@ else if ($_GET['type'] == 2) { /* és un grup */
 		
 		<?php
 			$query = "SELECT nom, any FROM albums WHERE artistaid = ".$artista['id']." ORDER BY any";
-			$infoalbum = mysql_query($query);
+			$infoalbum = mysqli_query($con, $query);
 			$i = 0;
 			if ($infoalbum) {
-			    while ($album = mysql_fetch_array($infoalbum)) {
+			    while ($album = mysqli_fetch_array($infoalbum)) {
 				    if (!strpos($album['nom'], "enzills") == 1) {
 				        $album_array[$i]['nom'] = $album['nom'];
 				        $album_array[$i]['any'] = $album['any'];
@@ -554,13 +557,13 @@ else if ($_GET['type'] == 2) { /* és un grup */
 									AND L.aprovada = 1
 									AND L.albumid = A.id
 							  ORDER BY A.nom, L.nom";
-					$infocanco = mysql_query($query);
+					$infocanco = mysqli_query($con, $query);
 					if ($infocanco) {
-					    while ($canco = mysql_fetch_array($infocanco)) {
+					    while ($canco = mysqli_fetch_array($infocanco)) {
 							    echo "<tr itemscope itemtype='http://schema.org/MusicRecording'>";
-							    echo "<td><a href='./".$artista['uri']."/".$canco['uri']."'><span itemprop='name'>".$canco['nom']."</span></a></td>";
+							    echo "<td><a href='". $baseUrl ."/d/".$artista['uri']."/".$canco['uri']."'><span itemprop='name'>".$canco['nom']."</span></a></td>";
 							    /* Info per a Google */
-							    echo "<meta itemprop='url' content='http://www.radiogramola.cat/canco/".$canco['uri']."'/>";
+							    echo "<meta itemprop='url' content='" . $baseUrl . "/canco/".$canco['uri']."'/>";
 							    $durada = explode(":",$canco['durada']);
 							    echo "<meta itemprop='duration' content='PT". $durada[1] ."M". $durada[2] ."S'/>";
 							    /* Fi info per a Google */
@@ -592,5 +595,5 @@ else if ($_GET['type'] == 2) { /* és un grup */
 </body>
 </html>
 <?php
-		mysql_close($con);
+		mysqli_close($con);
 ?>

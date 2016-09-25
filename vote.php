@@ -61,7 +61,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="./style-lite.css" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <script type="text/javascript">
 
@@ -138,23 +137,23 @@ function checkCookie() {
 </head>
 <body onload="checkCookie()">
 <div id="votacio">
-	<div id="div-neg">
-		<form id="form-neg" action="index-lite.php" method="post" enctype="multipart/form-data">
-			<input type="hidden" name="id" value="<?php echo $infocanco[0]['id']; ?>"/>
-			<input type="hidden" name="valoracio" value="0"/>
-			<a href="#" title="No m'agrada" onclick="parentNode.submit()"><img alt="No m'agrada" src="./img/neg.png"/></a>
-		</form>
-		<img id="image-neg" title="No m'agrada" alt="No m'agrada" src="./img/neg.png" style="display: none;"/>
-		<span class="vots"><?php echo $canco['negmes']; ?></span>
-	</div>
 	<div id="div-pos">
 		<form id="form-pos" action="index-lite.php" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="id" value="<?php echo $infocanco[0]['id']; ?>"/>
 			<input type="hidden" name="valoracio" value="1"/>
-			<a href="#" title="M'agrada" onclick="parentNode.submit()"><img alt="M'agrada" src="./img/pos.png"/></a>
+			<a href="#" title="M'agrada" onclick="parentNode.submit()"><img alt="M'agrada" src="<?php echo $baseUrl; ?>/img/pos.png"/></a>
 		</form>
-		<img id="image-pos" title="M'agrada" alt="M'agrada" src="./img/pos.png" style="display: none;"/>
+		<img id="image-pos" title="M'agrada" alt="M'agrada" src="<?php echo $baseUrl; ?>/img/pos.png" style="display: none;"/>
 		<span class="vots"><?php echo $canco['posmes']; ?></span>
+	</div>
+	<div id="div-neg">
+		<form id="form-neg" action="index-lite.php" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="id" value="<?php echo $infocanco[0]['id']; ?>"/>
+			<input type="hidden" name="valoracio" value="0"/>
+			<a href="#" title="No m'agrada" onclick="parentNode.submit()"><img alt="No m'agrada" src="<?php echo $baseUrl; ?>/img/neg.png"/></a>
+		</form>
+		<img id="image-neg" title="No m'agrada" alt="No m'agrada" src="<?php echo $baseUrl; ?>/img/neg.png" style="display: none;"/>
+		<span class="vots"><?php echo $canco['negmes']; ?></span>
 	</div>
 </div>
 </div>
